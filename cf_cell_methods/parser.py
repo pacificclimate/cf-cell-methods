@@ -8,7 +8,7 @@ from cf_cell_methods.representation import (
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
+logging.basicConfig(level=logging.CRITICAL, format='%(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 class CfcmParser(Parser):
@@ -47,7 +47,7 @@ class CfcmParser(Parser):
             over=p.opt_over_clause,
             extra_info=p.opt_extra_info,
         )
-
+    
     @_("NAME COLON method opt_within_clause opt_extra_info")
     def cell_method(self, p):
         return CellMethod(
@@ -56,26 +56,35 @@ class CfcmParser(Parser):
             within=p.opt_within_clause,
             extra_info=p.opt_extra_info,
         )
-
-
+    @_("NAME COLON method opt_where_clause opt_over_clause opt_within_clause opt_extra_info")
+    def cell_method(self, p):
+    # Construct and return a CellMethod object, passing all optional parts that are not None
+        return CellMethod(
+            name=p.NAME,
+            method=p.method,
+            where=p.opt_where_clause,
+            over=p.opt_over_clause,
+            within=p.opt_within_clause,
+            extra_info=p.opt_extra_info,
+    )
     # Method (with optional params)
 
     @_("NAME opt_params")
     def method(self, p):
         return Method(p.NAME, p.opt_params)
-
+    
     @_("params")
     def opt_params(self, p):
         return p.params
-
+    
     @_("empty")
     def opt_params(self, p):
         return None
-
+    
     @_("LBRACKET param_list RBRACKET")
     def params(self, p):
         return p.param_list
-
+    
     @_("param_list COMMA param")
     def param_list(self, p):
         return p.param_list + (p.param,)
@@ -83,47 +92,48 @@ class CfcmParser(Parser):
     @_("param")
     def param_list(self, p):
         return (p.param,)
-
+    
     @_("NUM")
     def param(self, p):
         return p.NUM
-
+    
     # Statistics applying to portions of cells (`where`, `over`)
 
     @_("WHERE NAME")
     def opt_where_clause(self, p):
         return p.NAME
-
+    
     @_("empty")
     def opt_where_clause(self, p):
         return None
-
+    
     @_("OVER NAME")
     def opt_over_clause(self, p):
         return p.NAME
-
+    
     @_("empty")
     def opt_over_clause(self, p):
         return None
-
+    
     @_("WITHIN NAME")
     def opt_within_clause(self, p):
         return p.NAME
-
+    
     @_("empty")
     def opt_within_clause(self, p):
         return None
-
+    
     # Extra method information
 
     @_("extra_info")
+
     def opt_extra_info(self, p):
         return p.extra_info
-
+    
     @_("empty")
     def opt_extra_info(self, p):
         return None
-
+    
     # This is our workaround for the fact that the cell_methods grammar is
     # not quite context-free due to the format for "extra information." We treat
     # extra information like a quoted string, but the "quotes" are matching
@@ -144,13 +154,13 @@ class CfcmParser(Parser):
         )
         non_standardized = match.group('comment') or None
         return ExtraInfo(standardized, non_standardized)
-
+    
     # Helper symbols
 
     @_("")
     def empty(self, p):
         pass
-    
+
     def error(self, token):
         # Log the last 3 cell methods
         if self.cell_method_history:

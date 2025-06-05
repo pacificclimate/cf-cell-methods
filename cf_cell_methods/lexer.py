@@ -1,5 +1,9 @@
 from sly import Lexer
+import logging
 
+# Configure logging
+logging.basicConfig(level=logging.CRITICAL, format='%(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 class CfcmLexer(Lexer):
     # This token list looks as if it ought to be treated as an error by Python.
@@ -52,7 +56,7 @@ class CfcmLexer(Lexer):
     NAME['within'] = WITHIN
 
     def error(self, t):
-        print(f"Unexpected character '{t.value[0]}' at column {self.index}")
+        logger.error(f"Unexpected character '{t.value[0]}' at column {self.index}")
         self.index += 1
 
 lexer = CfcmLexer()
