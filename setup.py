@@ -9,6 +9,7 @@ setup(
     keywords="climate meteorology cf conventions metadata",
     packages=find_packages(),
     version=".".join(str(d) for d in __version__),
+    python_requires=">=3.11,<3.14",
     url="http://www.pacificclimate.org/",
     author="Rod Glover",
     author_email="rglover@uvic.ca",
@@ -27,8 +28,10 @@ setup(
         Intended Audience :: Science/Research
         License :: OSI Approved :: GNU General Public License v3 (GPLv3)
         Operating System :: OS Independent
-        Programming Language :: Python :: 3.6
-        Programming Language :: Python :: 3.7
+        Programming Language :: Python :: 3
+        Programming Language :: Python :: 3.11
+        Programming Language :: Python :: 3.12
+        Programming Language :: Python :: 3.13
         Topic :: Internet
         Topic :: Scientific/Engineering
         Topic :: Database
